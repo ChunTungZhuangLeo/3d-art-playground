@@ -1,4 +1,4 @@
-/* 3D Art Playground - Styles */
+/* 3D Art Playground - Basketball Theme Styles */
 
 * {
     margin: 0;
@@ -9,7 +9,7 @@
 body {
     overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    background: #1a1a1f;
+    background: #0a0a0f;
     color: #fff;
     touch-action: none;
 }
@@ -29,7 +29,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #1a1a1f;
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a1020 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -38,12 +38,12 @@ body {
 }
 
 .loader {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border: 4px solid #333;
-    border-top-color: #4a9aff;
+    border-top-color: #ff8000;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -53,6 +53,92 @@ body {
 #loading-screen p {
     margin-top: 20px;
     color: #888;
+    font-size: 1.1rem;
+}
+
+/* Score Popup */
+#score-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 4rem;
+    font-weight: bold;
+    color: #00ff00;
+    text-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00;
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+#score-popup.show {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    animation: scorePopup 1.5s ease forwards;
+}
+
+@keyframes scorePopup {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    40% { transform: translate(-50%, -50%) scale(1); }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+/* Tutorial Overlay */
+#tutorial-overlay {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 80;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+#tutorial-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#tutorial-overlay.minimized {
+    top: 10px;
+    transform: translateX(-50%) scale(0.8);
+    opacity: 0.7;
+}
+
+.tutorial-card {
+    background: rgba(255, 128, 0, 0.95);
+    padding: 20px 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(255, 128, 0, 0.3);
+    animation: tutorialPulse 2s ease-in-out infinite;
+}
+
+@keyframes tutorialPulse {
+    0%, 100% { box-shadow: 0 10px 40px rgba(255, 128, 0, 0.3); }
+    50% { box-shadow: 0 10px 60px rgba(255, 128, 0, 0.5); }
+}
+
+.tutorial-step {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+#tutorial-text {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.hint {
+    font-size: 0.9rem;
+    opacity: 0.9;
 }
 
 /* Instructions Overlay */
@@ -62,7 +148,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -70,27 +156,70 @@ body {
 }
 
 .instructions-content {
-    background: #2a2a30;
-    padding: 40px;
-    border-radius: 20px;
-    max-width: 600px;
+    background: linear-gradient(135deg, #1a1a25 0%, #2a2035 100%);
+    padding: 50px;
+    border-radius: 30px;
+    max-width: 650px;
     width: 90%;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 128, 0, 0.2);
+}
+
+.basketball-icon {
+    font-size: 4rem;
+    margin-bottom: 10px;
+    animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 .instructions-content h2 {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, #4a9aff, #9a4aff);
+    background: linear-gradient(135deg, #ff8000, #ffaa00);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.instructions-content > p {
-    color: #aaa;
+.tagline {
+    font-size: 1.2rem;
+    color: #888;
     margin-bottom: 30px;
+}
+
+.demo-steps {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.demo-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-number {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #ff8000, #ff6000);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.step-text {
+    font-size: 1rem;
+    color: #ccc;
 }
 
 .instructions-grid {
@@ -102,21 +231,22 @@ body {
 }
 
 .instruction-item {
-    background: #1a1a1f;
+    background: rgba(0, 0, 0, 0.3);
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .instruction-item h4 {
-    color: #4a9aff;
-    margin-bottom: 10px;
+    color: #ff8000;
+    margin-bottom: 12px;
     font-size: 1rem;
 }
 
 .instruction-item ul {
     list-style: none;
     font-size: 0.9rem;
-    color: #ccc;
+    color: #bbb;
 }
 
 .instruction-item li {
@@ -128,26 +258,28 @@ body {
 }
 
 #start-btn {
-    background: linear-gradient(135deg, #4a9aff, #3a7acc);
+    background: linear-gradient(135deg, #ff8000, #ff6000);
     border: none;
     color: white;
-    padding: 15px 50px;
-    font-size: 1.2rem;
+    padding: 18px 60px;
+    font-size: 1.3rem;
     font-weight: bold;
-    border-radius: 30px;
+    border-radius: 40px;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 #start-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 10px 30px rgba(74, 154, 255, 0.4);
+    box-shadow: 0 15px 40px rgba(255, 128, 0, 0.5);
 }
 
 .note {
-    margin-top: 20px;
+    margin-top: 25px;
     font-size: 0.8rem;
-    color: #666;
+    color: #555;
 }
 
 /* Control Panel */
@@ -155,7 +287,7 @@ body {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: rgba(30, 30, 35, 0.95);
+    background: rgba(20, 20, 25, 0.95);
     border-radius: 15px;
     padding: 0;
     width: 280px;
@@ -163,6 +295,7 @@ body {
     backdrop-filter: blur(10px);
     z-index: 50;
     transition: transform 0.3s;
+    border: 1px solid rgba(255, 128, 0, 0.2);
 }
 
 #control-panel.collapsed .panel-content {
@@ -178,12 +311,12 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid rgba(255, 128, 0, 0.2);
 }
 
 .panel-header h3 {
     font-size: 1rem;
-    color: #4a9aff;
+    color: #ff8000;
 }
 
 #toggle-panel {
@@ -245,8 +378,8 @@ body {
 }
 
 .color-btn.selected {
-    border-color: #4a9aff;
-    box-shadow: 0 0 10px rgba(74, 154, 255, 0.5);
+    border-color: #ff8000;
+    box-shadow: 0 0 15px rgba(255, 128, 0, 0.5);
 }
 
 /* Brush Size Slider */
@@ -265,7 +398,7 @@ body {
     appearance: none;
     width: 20px;
     height: 20px;
-    background: #4a9aff;
+    background: #ff8000;
     border-radius: 50%;
     cursor: pointer;
     transition: transform 0.2s;
@@ -278,7 +411,7 @@ body {
 #brush-size::-moz-range-thumb {
     width: 20px;
     height: 20px;
-    background: #4a9aff;
+    background: #ff8000;
     border-radius: 50%;
     cursor: pointer;
     border: none;
@@ -307,8 +440,8 @@ body {
 }
 
 .mode-btn.selected {
-    background: #4a9aff;
-    border-color: #4a9aff;
+    background: #ff8000;
+    border-color: #ff8000;
 }
 
 /* Action Buttons */
@@ -354,7 +487,7 @@ body {
 .checkbox-label input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: #4a9aff;
+    accent-color: #ff8000;
 }
 
 /* Mobile Controls */
@@ -373,7 +506,7 @@ body {
     height: 60px;
     border-radius: 50%;
     border: none;
-    background: rgba(74, 154, 255, 0.9);
+    background: rgba(255, 128, 0, 0.9);
     color: white;
     font-size: 1.5rem;
     cursor: pointer;
@@ -383,11 +516,21 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .instructions-content {
-        padding: 25px;
+        padding: 30px;
     }
 
     .instructions-content h2 {
-        font-size: 1.8rem;
+        font-size: 2rem;
+    }
+
+    .basketball-icon {
+        font-size: 3rem;
+    }
+
+    .demo-steps {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
     }
 
     .instructions-grid {
@@ -396,16 +539,16 @@ body {
 
     #control-panel {
         top: auto;
-        bottom: 20px;
+        bottom: 100px;
         right: 10px;
         left: 10px;
         width: auto;
-        max-height: 50vh;
+        max-height: 45vh;
         overflow-y: auto;
     }
 
     #control-panel.hidden {
-        transform: translateY(100%);
+        transform: translateY(calc(100% + 100px));
     }
 
     #color-palette {
@@ -423,16 +566,37 @@ body {
     .control-section {
         margin-bottom: 15px;
     }
+
+    #tutorial-overlay {
+        top: auto;
+        bottom: 180px;
+    }
+
+    .tutorial-card {
+        padding: 15px 25px;
+    }
+
+    #tutorial-text {
+        font-size: 1.1rem;
+    }
 }
 
 @media (max-width: 480px) {
+    .instructions-content {
+        padding: 25px;
+    }
+
     .instructions-content h2 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+    }
+
+    .tagline {
+        font-size: 1rem;
     }
 
     #start-btn {
-        padding: 12px 40px;
-        font-size: 1rem;
+        padding: 15px 40px;
+        font-size: 1.1rem;
     }
 
     .instruction-item {
@@ -453,6 +617,10 @@ body {
 
     .mode-btn {
         flex-basis: calc(50% - 4px);
+    }
+
+    .step-text {
+        font-size: 0.9rem;
     }
 }
 

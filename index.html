@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>3D Art Playground</title>
+    <title>3D Art Playground - Draw & Throw</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.babylonjs.com/havok/HavokPhysics_umd.js"></script>
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
@@ -17,7 +17,19 @@
 
     <canvas id="renderCanvas"></canvas>
 
-    <!-- Control Panel for Desktop/Mobile -->
+    <!-- Score Popup -->
+    <div id="score-popup">SCORE!</div>
+
+    <!-- Tutorial Overlay -->
+    <div id="tutorial-overlay">
+        <div class="tutorial-card">
+            <div class="tutorial-step">Step 1</div>
+            <p id="tutorial-text">Draw a basketball in the air!</p>
+            <p id="tutorial-hint" class="hint">Click & drag to draw an orange ball</p>
+        </div>
+    </div>
+
+    <!-- Control Panel -->
     <div id="control-panel">
         <div class="panel-header">
             <h3>Controls</h3>
@@ -25,16 +37,16 @@
         </div>
 
         <div class="panel-content">
-            <!-- Color Palette -->
+            <!-- Color Palette - Orange first -->
             <div class="control-section">
                 <label>Color</label>
                 <div id="color-palette">
-                    <button class="color-btn selected" data-color="0" style="background: rgb(255,255,255);" title="White"></button>
-                    <button class="color-btn" data-color="1" style="background: rgb(255,0,0);" title="Red"></button>
-                    <button class="color-btn" data-color="2" style="background: rgb(0,255,0);" title="Green"></button>
-                    <button class="color-btn" data-color="3" style="background: rgb(0,0,255);" title="Blue"></button>
-                    <button class="color-btn" data-color="4" style="background: rgb(255,255,0);" title="Yellow"></button>
-                    <button class="color-btn" data-color="5" style="background: rgb(255,128,0);" title="Orange"></button>
+                    <button class="color-btn selected" data-color="0" style="background: rgb(255,128,0);" title="Orange"></button>
+                    <button class="color-btn" data-color="1" style="background: rgb(255,255,255);" title="White"></button>
+                    <button class="color-btn" data-color="2" style="background: rgb(255,0,0);" title="Red"></button>
+                    <button class="color-btn" data-color="3" style="background: rgb(0,255,0);" title="Green"></button>
+                    <button class="color-btn" data-color="4" style="background: rgb(0,0,255);" title="Blue"></button>
+                    <button class="color-btn" data-color="5" style="background: rgb(255,255,0);" title="Yellow"></button>
                     <button class="color-btn" data-color="6" style="background: rgb(128,0,128);" title="Purple"></button>
                     <button class="color-btn" data-color="7" style="background: rgb(0,255,255);" title="Cyan"></button>
                     <button class="color-btn" data-color="8" style="background: rgb(255,102,178);" title="Pink"></button>
@@ -67,7 +79,7 @@
             <div class="control-section">
                 <label class="checkbox-label">
                     <input type="checkbox" id="physics-enabled" checked>
-                    Enable Physics on Drop
+                    Enable Physics on Throw
                 </label>
             </div>
         </div>
@@ -75,34 +87,48 @@
 
     <!-- Instructions Overlay -->
     <div id="instructions">
-        <div class="instructions-content">
+        <div class="instructions-content basketball-theme">
+            <div class="basketball-icon">🏀</div>
             <h2>3D Art Playground</h2>
-            <p>Draw in 3D space with physics!</p>
+            <p class="tagline">Draw anything. Give it physics. Watch it fly.</p>
+
+            <div class="demo-steps">
+                <div class="demo-step">
+                    <span class="step-number">1</span>
+                    <span class="step-text">Draw a basketball</span>
+                </div>
+                <div class="demo-step">
+                    <span class="step-number">2</span>
+                    <span class="step-text">Grab & throw it</span>
+                </div>
+                <div class="demo-step">
+                    <span class="step-number">3</span>
+                    <span class="step-text">Score!</span>
+                </div>
+            </div>
 
             <div class="instructions-grid">
                 <div class="instruction-item">
                     <h4>Desktop</h4>
                     <ul>
                         <li><strong>Draw:</strong> Left-click + drag</li>
+                        <li><strong>Grab:</strong> Press G, then click</li>
                         <li><strong>Orbit:</strong> Right-click + drag</li>
-                        <li><strong>Zoom:</strong> Scroll wheel</li>
-                        <li><strong>Grab:</strong> G key, then click</li>
                     </ul>
                 </div>
                 <div class="instruction-item">
                     <h4>Mobile</h4>
                     <ul>
                         <li><strong>Draw:</strong> 1 finger drag</li>
+                        <li><strong>Grab:</strong> Tap Grab button</li>
                         <li><strong>Orbit:</strong> 2 finger drag</li>
-                        <li><strong>Zoom:</strong> Pinch gesture</li>
-                        <li><strong>Grab:</strong> Use Grab mode</li>
                     </ul>
                 </div>
             </div>
 
-            <button id="start-btn">Start Drawing</button>
+            <button id="start-btn">Let's Play!</button>
 
-            <p class="note">Originally built for Meta Quest VR</p>
+            <p class="note">Built with Babylon.js + Havok Physics | VR-ready for Meta Quest</p>
         </div>
     </div>
 
