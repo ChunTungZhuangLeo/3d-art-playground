@@ -494,12 +494,19 @@ const clearAll = () => {
 
 // Grab functionality
 let lastGrabPosition = null;
-let grabVelocity = new BABYLON.Vector3(0, 0, 0);
+let grabOffset = new BABYLON.Vector3(0, 0, 0);
+let velocityHistory = [];
+const VELOCITY_HISTORY_SIZE = 5;
 
 const tryGrabStroke = (pickResult) => {
     if (pickResult.hit && pickResult.pickedMesh && pickResult.pickedMesh.name.startsWith("stroke")) {
         grabbedStroke = pickResult.pickedMesh;
+
+        // Calculate offset between pick point and stroke center
+        const strokePos = grabbedStroke.getAbsolutePosition();
+        grabOffset = strokePos.subtract(pickResult.pickedPoint);
         lastGrabPosition = pickResult.pickedPoint.clone();
+        velocityHistory = [];
 
         if (grabbedStroke._physicsAggregate) {
             grabbedStroke._physicsAggregate.dispose();
@@ -511,6 +518,7 @@ const tryGrabStroke = (pickResult) => {
             updateTutorial(2);
         }
 
+        console.log("Grabbed stroke at", strokePos.toString());
         return true;
     }
     return false;
@@ -519,23 +527,60 @@ const tryGrabStroke = (pickResult) => {
 const moveGrabbedStroke = (position) => {
     if (!grabbedStroke || !position) return;
 
+    // Track velocity history for smooth throwing
     if (lastGrabPosition) {
-        grabVelocity = position.subtract(lastGrabPosition).scale(60); // Amplify for throw
+        const delta = position.subtract(lastGrabPosition);
+        velocityHistory.push({
+            velocity: delta.clone(),
+            time: performance.now()
+        });
+
+        // Keep only recent samples
+        if (velocityHistory.length > VELOCITY_HISTORY_SIZE) {
+            velocityHistory.shift();
+        }
     }
 
-    grabbedStroke.position = position;
+    // Move stroke maintaining the grab offset
+    grabbedStroke.position = position.add(grabOffset);
     lastGrabPosition = position.clone();
+};
+
+const calculateThrowVelocity = () => {
+    if (velocityHistory.length < 2) {
+        return new BABYLON.Vector3(0, 0, 0);
+    }
+
+    // Calculate weighted average velocity (recent frames weighted more)
+    let totalVelocity = new BABYLON.Vector3(0, 0, 0);
+    let totalWeight = 0;
+
+    for (let i = 0; i < velocityHistory.length; i++) {
+        const weight = (i + 1); // More recent = higher weight
+        totalVelocity.addInPlace(velocityHistory[i].velocity.scale(weight));
+        totalWeight += weight;
+    }
+
+    if (totalWeight > 0) {
+        totalVelocity.scaleInPlace(1 / totalWeight);
+    }
+
+    // Scale up for a satisfying throw feel
+    return totalVelocity.scale(80);
 };
 
 const releaseStroke = () => {
     if (!grabbedStroke) return;
 
+    const throwVelocity = calculateThrowVelocity();
+
     if (physicsOnDrop) {
         const aggregate = addStrokePhysics(grabbedStroke, 0.3);
 
         // Apply throw velocity
-        if (aggregate.body && grabVelocity.length() > 0.1) {
-            aggregate.body.setLinearVelocity(grabVelocity);
+        if (aggregate.body && throwVelocity.length() > 0.5) {
+            aggregate.body.setLinearVelocity(throwVelocity);
+            console.log("Throw velocity:", throwVelocity.toString());
         }
     } else {
         addStrokePhysics(grabbedStroke, 0);
@@ -543,12 +588,14 @@ const releaseStroke = () => {
 
     grabbedStroke = null;
     lastGrabPosition = null;
-    grabVelocity = new BABYLON.Vector3(0, 0, 0);
+    grabOffset = new BABYLON.Vector3(0, 0, 0);
+    velocityHistory = [];
 };
 
 // Input handling
 const setupInputHandling = (drawingPlane, cursorIndicator) => {
     let pointerDown = false;
+    let grabPlane = null; // Dynamic plane for grabbing
 
     const get3DPosition = (evt) => {
         const pickResult = scene.pick(evt.clientX, evt.clientY, (mesh) => mesh === drawingPlane);
@@ -556,6 +603,24 @@ const setupInputHandling = (drawingPlane, cursorIndicator) => {
             return pickResult.pickedPoint;
         }
         return null;
+    };
+
+    // Get position on a plane facing the camera at a specific distance
+    const getGrabPosition = (evt) => {
+        if (!grabbedStroke) return null;
+
+        // Create a ray from camera through screen point
+        const ray = scene.createPickingRay(evt.clientX, evt.clientY, BABYLON.Matrix.Identity(), camera);
+
+        // Use a plane perpendicular to camera direction at the stroke's distance
+        const strokePos = grabbedStroke.getAbsolutePosition().add(grabOffset);
+        const cameraPos = camera.position;
+        const cameraToStroke = strokePos.subtract(cameraPos);
+        const distance = cameraToStroke.length();
+
+        // Project ray to the same distance from camera
+        const newPos = cameraPos.add(ray.direction.scale(distance));
+        return newPos;
     };
 
     const updateCursor = (position, color) => {
@@ -582,25 +647,38 @@ const setupInputHandling = (drawingPlane, cursorIndicator) => {
         } else if (currentMode === 'grab' && evt.button === 0) {
             camera.detachControl();
             const pickResult = scene.pick(evt.clientX, evt.clientY, (mesh) => mesh.name.startsWith("stroke"));
-            tryGrabStroke(pickResult);
+            if (tryGrabStroke(pickResult)) {
+                // Successfully grabbed - store initial grab position for velocity tracking
+                lastGrabPosition = pickResult.pickedPoint.clone();
+            }
         } else if (currentMode === 'orbit' || evt.button === 2) {
             camera.attachControl(canvas, true);
         }
     });
 
     canvas.addEventListener('pointermove', (evt) => {
-        const pos = get3DPosition(evt);
-
         if (currentMode === 'draw') {
+            const pos = get3DPosition(evt);
             updateCursor(pos, getCurrentColor());
             if (isDrawing && pos) {
                 addPoint(pos);
             }
         } else if (currentMode === 'grab') {
-            if (grabbedStroke && pos) {
-                moveGrabbedStroke(pos);
+            if (grabbedStroke) {
+                const grabPos = getGrabPosition(evt);
+                if (grabPos) {
+                    moveGrabbedStroke(grabPos);
+                    updateCursor(grabbedStroke.getAbsolutePosition(), new BABYLON.Color3(1, 0.5, 0));
+                }
+            } else {
+                // Show cursor when hovering over strokes
+                const pickResult = scene.pick(evt.clientX, evt.clientY, (mesh) => mesh.name.startsWith("stroke"));
+                if (pickResult.hit) {
+                    updateCursor(pickResult.pickedPoint, new BABYLON.Color3(1, 0.5, 0));
+                } else {
+                    updateCursor(null, new BABYLON.Color3(1, 0.5, 0));
+                }
             }
-            updateCursor(grabbedStroke ? pos : null, new BABYLON.Color3(1, 0.5, 0));
         } else {
             updateCursor(null, getCurrentColor());
         }
