@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D Art Playground</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.babylonjs.com/havok/HavokPhysics_umd.js"></script>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <p>Loading 3D Art Playground...</p>
+    </div>
+
+    <canvas id="renderCanvas"></canvas>
+
+    <!-- Control Panel for Desktop/Mobile -->
+    <div id="control-panel">
+        <div class="panel-header">
+            <h3>Controls</h3>
+            <button id="toggle-panel" aria-label="Toggle panel">-</button>
+        </div>
+
+        <div class="panel-content">
+            <!-- Color Palette -->
+            <div class="control-section">
+                <label>Color</label>
+                <div id="color-palette">
+                    <button class="color-btn selected" data-color="0" style="background: rgb(255,255,255);" title="White"></button>
+                    <button class="color-btn" data-color="1" style="background: rgb(255,0,0);" title="Red"></button>
+                    <button class="color-btn" data-color="2" style="background: rgb(0,255,0);" title="Green"></button>
+                    <button class="color-btn" data-color="3" style="background: rgb(0,0,255);" title="Blue"></button>
+                    <button class="color-btn" data-color="4" style="background: rgb(255,255,0);" title="Yellow"></button>
+                    <button class="color-btn" data-color="5" style="background: rgb(255,128,0);" title="Orange"></button>
+                    <button class="color-btn" data-color="6" style="background: rgb(128,0,128);" title="Purple"></button>
+                    <button class="color-btn" data-color="7" style="background: rgb(0,255,255);" title="Cyan"></button>
+                    <button class="color-btn" data-color="8" style="background: rgb(255,102,178);" title="Pink"></button>
+                </div>
+            </div>
+
+            <!-- Brush Size -->
+            <div class="control-section">
+                <label>Brush Size: <span id="size-value">0.050</span></label>
+                <input type="range" id="brush-size" min="0.005" max="0.1" step="0.005" value="0.05">
+            </div>
+
+            <!-- Mode Selection -->
+            <div class="control-section">
+                <label>Mode</label>
+                <div id="mode-buttons">
+                    <button class="mode-btn selected" data-mode="draw">Draw</button>
+                    <button class="mode-btn" data-mode="grab">Grab</button>
+                    <button class="mode-btn" data-mode="orbit">Orbit</button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="control-section">
+                <button id="undo-btn" class="action-btn">Undo</button>
+                <button id="clear-btn" class="action-btn danger">Clear All</button>
+            </div>
+
+            <!-- Physics Toggle -->
+            <div class="control-section">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="physics-enabled" checked>
+                    Enable Physics on Drop
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions Overlay -->
+    <div id="instructions">
+        <div class="instructions-content">
+            <h2>3D Art Playground</h2>
+            <p>Draw in 3D space with physics!</p>
+
+            <div class="instructions-grid">
+                <div class="instruction-item">
+                    <h4>Desktop</h4>
+                    <ul>
+                        <li><strong>Draw:</strong> Left-click + drag</li>
+                        <li><strong>Orbit:</strong> Right-click + drag</li>
+                        <li><strong>Zoom:</strong> Scroll wheel</li>
+                        <li><strong>Grab:</strong> G key, then click</li>
+                    </ul>
+                </div>
+                <div class="instruction-item">
+                    <h4>Mobile</h4>
+                    <ul>
+                        <li><strong>Draw:</strong> 1 finger drag</li>
+                        <li><strong>Orbit:</strong> 2 finger drag</li>
+                        <li><strong>Zoom:</strong> Pinch gesture</li>
+                        <li><strong>Grab:</strong> Use Grab mode</li>
+                    </ul>
+                </div>
+            </div>
+
+            <button id="start-btn">Start Drawing</button>
+
+            <p class="note">Originally built for Meta Quest VR</p>
+        </div>
+    </div>
+
+    <!-- Mobile-specific controls -->
+    <div id="mobile-controls">
+        <button id="mobile-undo" aria-label="Undo">↶</button>
+        <button id="mobile-menu" aria-label="Menu">☰</button>
+    </div>
+
+    <script src="app.js" type="module"></script>
+</body>
+</html>
