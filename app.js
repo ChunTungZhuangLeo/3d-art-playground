@@ -47,7 +47,7 @@ let currentColorIndex = 0;
 
 const getCurrentColor = () => colorPalette[currentColorIndex].color;
 
-// Create basketball hoop
+// Create basketball hoop (rotated 180 degrees - facing the user)
 const createBasketballHoop = () => {
     // Backboard
     const backboard = BABYLON.MeshBuilder.CreateBox("backboard", {
@@ -55,7 +55,7 @@ const createBasketballHoop = () => {
         height: 1.2,
         depth: 0.1
     }, scene);
-    backboard.position = new BABYLON.Vector3(0, 3, 4);
+    backboard.position = new BABYLON.Vector3(0, 3, -4);
 
     const backboardMat = new BABYLON.StandardMaterial("backboardMat", scene);
     backboardMat.diffuseColor = new BABYLON.Color3(1, 1, 1);
@@ -71,7 +71,7 @@ const createBasketballHoop = () => {
         height: 0.45,
         depth: 0.02
     }, scene);
-    targetSquare.position = new BABYLON.Vector3(0, 2.85, 3.93);
+    targetSquare.position = new BABYLON.Vector3(0, 2.85, -3.93);
     const targetMat = new BABYLON.StandardMaterial("targetMat", scene);
     targetMat.diffuseColor = frameColor;
     targetMat.emissiveColor = frameColor.scale(0.3);
@@ -83,7 +83,7 @@ const createBasketballHoop = () => {
         thickness: 0.025,
         tessellation: 32
     }, scene);
-    hoopRim.position = new BABYLON.Vector3(0, 2.6, 3.55);
+    hoopRim.position = new BABYLON.Vector3(0, 2.6, -3.55);
     hoopRim.rotation.x = Math.PI / 2;
 
     const rimMat = new BABYLON.StandardMaterial("rimMat", scene);
@@ -96,12 +96,11 @@ const createBasketballHoop = () => {
         height: 0.4,
         diameter: 0.03
     }, scene);
-    connector.position = new BABYLON.Vector3(0, 2.6, 3.75);
+    connector.position = new BABYLON.Vector3(0, 2.6, -3.75);
     connector.rotation.x = Math.PI / 2;
     connector.material = rimMat;
 
     // Net (simplified with lines)
-    const netPoints = [];
     const netSegments = 12;
     const netDepth = 0.4;
 
@@ -114,8 +113,8 @@ const createBasketballHoop = () => {
 
         const netLine = BABYLON.MeshBuilder.CreateLines("netLine" + i, {
             points: [
-                new BABYLON.Vector3(topX, 0, topZ + 3.55),
-                new BABYLON.Vector3(bottomX, -netDepth, bottomZ + 3.55)
+                new BABYLON.Vector3(topX, 0, topZ - 3.55),
+                new BABYLON.Vector3(bottomX, -netDepth, bottomZ - 3.55)
             ]
         }, scene);
         netLine.position.y = 2.6;
@@ -133,7 +132,7 @@ const createBasketballHoop = () => {
             ringPoints.push(new BABYLON.Vector3(
                 Math.cos(angle) * ringRadius,
                 ringY,
-                Math.sin(angle) * ringRadius + 3.55
+                Math.sin(angle) * ringRadius - 3.55
             ));
         }
 
@@ -149,7 +148,7 @@ const createBasketballHoop = () => {
         height: 4,
         diameter: 0.15
     }, scene);
-    pole.position = new BABYLON.Vector3(0, 1.5, 4.2);
+    pole.position = new BABYLON.Vector3(0, 1.5, -4.2);
 
     const poleMat = new BABYLON.StandardMaterial("poleMat", scene);
     poleMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
@@ -165,7 +164,7 @@ const createBasketballHoop = () => {
         height: 0.3,
         diameter: 0.4
     }, scene);
-    hoopTrigger.position = new BABYLON.Vector3(0, 2.45, 3.55);
+    hoopTrigger.position = new BABYLON.Vector3(0, 2.45, -3.55);
     hoopTrigger.visibility = 0;
     hoopTrigger.isPickable = false;
 
@@ -260,10 +259,10 @@ const createScene = async function() {
     // Arc Rotate Camera - positioned for basketball view
     camera = new BABYLON.ArcRotateCamera(
         "camera",
-        -Math.PI / 2,
+        Math.PI / 2,
         Math.PI / 3,
         6,
-        new BABYLON.Vector3(0, 2, 2),
+        new BABYLON.Vector3(0, 2, -2),
         scene
     );
     camera.attachControl(canvas, true);
@@ -290,8 +289,8 @@ const createScene = async function() {
     // Spotlight on hoop
     const spotLight = new BABYLON.SpotLight(
         "spotLight",
-        new BABYLON.Vector3(0, 5, 2),
-        new BABYLON.Vector3(0, -1, 0.5),
+        new BABYLON.Vector3(0, 5, -2),
+        new BABYLON.Vector3(0, -1, -0.5),
         Math.PI / 3,
         2,
         scene
