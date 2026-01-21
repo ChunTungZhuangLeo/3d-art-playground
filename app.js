@@ -47,9 +47,9 @@ let currentColorIndex = 0;
 
 const getCurrentColor = () => colorPalette[currentColorIndex].color;
 
-// Create basketball hoop (rotated 180 degrees - facing the user)
+// Create basketball hoop (facing the user - rim in front, backboard behind)
 const createBasketballHoop = () => {
-    // Backboard
+    // Backboard (behind the rim, further from user)
     const backboard = BABYLON.MeshBuilder.CreateBox("backboard", {
         width: 1.8,
         height: 1.2,
@@ -65,7 +65,7 @@ const createBasketballHoop = () => {
     // Backboard frame
     const frameColor = new BABYLON.Color3(0.8, 0.2, 0.2);
 
-    // Red square on backboard
+    // Red square on backboard (on the front face, toward user)
     const targetSquare = BABYLON.MeshBuilder.CreateBox("targetSquare", {
         width: 0.6,
         height: 0.45,
@@ -77,13 +77,13 @@ const createBasketballHoop = () => {
     targetMat.emissiveColor = frameColor.scale(0.3);
     targetSquare.material = targetMat;
 
-    // Rim (torus)
+    // Rim (torus) - closer to user than backboard
     hoopRim = BABYLON.MeshBuilder.CreateTorus("rim", {
         diameter: 0.46,
         thickness: 0.025,
         tessellation: 32
     }, scene);
-    hoopRim.position = new BABYLON.Vector3(0, 2.6, -3.55);
+    hoopRim.position = new BABYLON.Vector3(0, 2.6, -3.35);
     hoopRim.rotation.x = Math.PI / 2;
 
     const rimMat = new BABYLON.StandardMaterial("rimMat", scene);
@@ -93,16 +93,17 @@ const createBasketballHoop = () => {
 
     // Rim connector to backboard
     const connector = BABYLON.MeshBuilder.CreateCylinder("connector", {
-        height: 0.4,
+        height: 0.5,
         diameter: 0.03
     }, scene);
-    connector.position = new BABYLON.Vector3(0, 2.6, -3.75);
+    connector.position = new BABYLON.Vector3(0, 2.6, -3.65);
     connector.rotation.x = Math.PI / 2;
     connector.material = rimMat;
 
     // Net (simplified with lines)
     const netSegments = 12;
     const netDepth = 0.4;
+    const rimZ = -3.35;
 
     for (let i = 0; i < netSegments; i++) {
         const angle = (i / netSegments) * Math.PI * 2;
@@ -113,8 +114,8 @@ const createBasketballHoop = () => {
 
         const netLine = BABYLON.MeshBuilder.CreateLines("netLine" + i, {
             points: [
-                new BABYLON.Vector3(topX, 0, topZ - 3.55),
-                new BABYLON.Vector3(bottomX, -netDepth, bottomZ - 3.55)
+                new BABYLON.Vector3(topX, 0, topZ + rimZ),
+                new BABYLON.Vector3(bottomX, -netDepth, bottomZ + rimZ)
             ]
         }, scene);
         netLine.position.y = 2.6;
@@ -132,7 +133,7 @@ const createBasketballHoop = () => {
             ringPoints.push(new BABYLON.Vector3(
                 Math.cos(angle) * ringRadius,
                 ringY,
-                Math.sin(angle) * ringRadius - 3.55
+                Math.sin(angle) * ringRadius + rimZ
             ));
         }
 
@@ -143,12 +144,12 @@ const createBasketballHoop = () => {
         netRing.color = new BABYLON.Color3(1, 1, 1);
     }
 
-    // Pole
+    // Pole (behind backboard)
     const pole = BABYLON.MeshBuilder.CreateCylinder("pole", {
         height: 4,
         diameter: 0.15
     }, scene);
-    pole.position = new BABYLON.Vector3(0, 1.5, -4.2);
+    pole.position = new BABYLON.Vector3(0, 1.5, -4.3);
 
     const poleMat = new BABYLON.StandardMaterial("poleMat", scene);
     poleMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
@@ -159,12 +160,12 @@ const createBasketballHoop = () => {
     new BABYLON.PhysicsAggregate(hoopRim, BABYLON.PhysicsShapeType.MESH, { mass: 0, restitution: 0.5 }, scene);
     new BABYLON.PhysicsAggregate(pole, BABYLON.PhysicsShapeType.CYLINDER, { mass: 0 }, scene);
 
-    // Invisible trigger zone for scoring
+    // Invisible trigger zone for scoring (under the rim)
     hoopTrigger = BABYLON.MeshBuilder.CreateCylinder("hoopTrigger", {
         height: 0.3,
         diameter: 0.4
     }, scene);
-    hoopTrigger.position = new BABYLON.Vector3(0, 2.45, -3.55);
+    hoopTrigger.position = new BABYLON.Vector3(0, 2.45, rimZ);
     hoopTrigger.visibility = 0;
     hoopTrigger.isPickable = false;
 
