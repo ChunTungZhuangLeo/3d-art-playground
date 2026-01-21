@@ -157,17 +157,13 @@
             </div>
             <div class="video-container">
                 <div class="video-wrapper">
-                    <!-- Replace VIDEO_ID with your YouTube video ID after uploading -->
-                    <!-- Option 1: YouTube embed (recommended for web) -->
-                    <div class="video-placeholder" id="video-placeholder">
-                        <div class="play-button">▶</div>
-                        <p>Click to play demo video</p>
-                        <small>Drawing a basketball hoop and shooting hoops in AR</small>
-                    </div>
-                    <video id="demo-video" style="display:none;" controls>
-                        <source src="demo.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
+                    <iframe
+                        src="https://www.youtube.com/embed/wBMOKKhfgOw"
+                        title="Art House Demo - AR Drawing with Physics"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
                 </div>
             </div>
             <div class="demo-features">
@@ -345,22 +341,6 @@
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     document.querySelector('.nav-links').classList.remove('active');
                 }
-            });
-        });
-
-        // Video placeholder click
-        document.getElementById('video-placeholder')?.addEventListener('click', function() {
-            const video = document.getElementById('demo-video');
-            const placeholder = this;
-
-            // Check if video file exists
-            video.style.display = 'block';
-            placeholder.style.display = 'none';
-            video.play().catch(e => {
-                // If video doesn't load, show message
-                placeholder.style.display = 'flex';
-                placeholder.innerHTML = '<p>Video coming soon</p><small>Upload to YouTube for best results</small>';
-                video.style.display = 'none';
             });
         });
 
