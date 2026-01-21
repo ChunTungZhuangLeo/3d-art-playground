@@ -1,9 +1,31 @@
-/* 3D Art Playground - Basketball Theme Styles */
+/* Art House - Interactive Demo Styles */
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+/* Back Link */
+#back-link {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+    color: #ff8000;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    background: rgba(20, 20, 25, 0.9);
+    border-radius: 25px;
+    border: 1px solid rgba(255, 128, 0, 0.3);
+    transition: all 0.3s;
+}
+
+#back-link:hover {
+    background: rgba(255, 128, 0, 0.2);
+    border-color: #ff8000;
 }
 
 body {
