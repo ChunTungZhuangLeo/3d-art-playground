@@ -257,13 +257,13 @@ const createScene = async function() {
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
     console.log("Havok Physics Enabled!");
 
-    // Arc Rotate Camera - positioned for basketball view
+    // Arc Rotate Camera - positioned for basketball view (looking at hoop area)
     camera = new BABYLON.ArcRotateCamera(
         "camera",
-        Math.PI / 2,
+        Math.PI,        // Looking from positive z toward negative z (toward the hoop)
         Math.PI / 3,
         6,
-        new BABYLON.Vector3(0, 2, -2),
+        new BABYLON.Vector3(0, 2.5, -3),  // Target near the hoop
         scene
     );
     camera.attachControl(canvas, true);
